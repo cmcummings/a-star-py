@@ -66,8 +66,8 @@ class AStar:
         s = self.calculate_score((0, 0))
 
     def get_points_around(self, point):
-        """Returns a list of the points around (up, down, left, right) a point."""
-        x, y = point[0], point[1]
+        """Returns a list of points around (up, down, left, right) a Point."""
+        x, y = point.x, point.y
         points = []
 
         # Up
@@ -89,8 +89,7 @@ class AStar:
         """Calculates F for a point."""
         print(point)
         # Calculate G: the movement cost from the start point to the current point
-        g = 0
-
+        g = point.parent.g + 1
 
         # Calculate H: the estimated movement cost from the current point to the end point
         # Manhattan distance method: # of horizontal + # of vertical squares to reach the end
@@ -101,11 +100,13 @@ class AStar:
 
 class Point:
 
-    def __init__(self, x, y, f, parent=None):
-        self.x = x
-        self.y = y
-        self.f = f
+    def __init__(self, x, y, g, h, parent=None):
+        self.x, self.y = x, y
+        self.f, self.g, self.h = g+h, g, h
         self.parent = parent
+
+    def update_score(self, g, h):
+        self.f, self.g, self.h = g+h, g, h
 
 
 class InvalidStartError(Exception):
