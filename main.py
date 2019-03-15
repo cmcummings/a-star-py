@@ -1,31 +1,48 @@
 from visualization import Visualization
+from control_panel import ControlPanel
 from astar import AStar
 from tkinter import *
 from config import *
 from time import time
 
-
-class Main:
+class Main(Tk):
 
     def __init__(self):
+        Tk.__init__(self)
         # Initialize master GUI
-        self.master = Tk()
-        self.master.title("A* Search Algorithm")
-
-        # Initialize canvas
-        self.visualization = Visualization(self.master, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
+        self.title("A* Search Algorithm")
+        self.resizable(0, 0)
 
         # Initialize A*
         self.astar = AStar(DEFAULT_MAP)
 
-        print("GUI done loading... beginning main loop...")
+        # Initialize canvas
+        self.visualization = Visualization(self, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
+
+        # Initialize control panel
+        self.control_panel = ControlPanel(self)
+
+        # For testing purposes:
+        # while self.astar.end_path is None:
+        #     self.astar.advance()
+
+        # path = self.astar.get_final_path()
+        # for node in path:
+        #     print(node)
+
+        # print(self.astar.get_node_map())
 
         # Main loop
         while True:
             self.visualization.tick()
 
-            self.master.update_idletasks()
-            self.master.update()
+            self.update_idletasks()
+            self.update()
+    
+    def advance(self):
+        """Advances the algorithm and updates the visualization."""
+        self.astar.advance()
+        self.visualization.node_map = self.astar.get_node_map()
 
 
 if __name__ == "__main__":
