@@ -8,7 +8,7 @@ class ControlPanel(Frame):
         self.grid(row=0, column=1)
         self.config(padx=5, pady=5)
 
-        self.b_advance = Button(self, text="Advance", command=master.advance())
+        self.b_advance = Button(self, text="Advance", command=master.advance)
         self.b_advance.pack(padx=5, pady=5, side='top')
 
         
