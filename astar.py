@@ -1,5 +1,5 @@
 # astar.py
-
+from config import *
 
 
 get_distance_to_end = lambda node, end: abs(end[0] - node.x) + abs(end[1] - node.y)
@@ -66,6 +66,11 @@ class AStar:
         # Check if there is an open node
         if len(self.open) == 0:
             print("No path available")
+            return "NO_PATH"
+        # Check fi already solved
+        if self.end_path is not None:
+            print("End path found")
+            return "SOLVED"
         # Get the node on the open list which has the lowest score (S).
         S = self.open[0]
         for node in self.open:
@@ -105,6 +110,8 @@ class AStar:
             # - If T is the end node:
             if T.pos() == self.end:
                 self.end_path = T
+                return "SOLVED"
+        return "SOLVING"
 
     def get_nodes_around(self, node):
         """Returns a list of coordinates around (up, down, left, right) a node."""
@@ -112,13 +119,13 @@ class AStar:
         coords = []
 
         # Up
-        if y-1 > 0 and self.level_map[y-1][x] is not self.WALL:
+        if y-1 >= 0 and self.level_map[y-1][x] is not self.WALL:
             coords.append(Node(x, y-1, node))
         # Down
         if y+1 < len(self.level_map) and self.level_map[y+1][x] is not self.WALL:
             coords.append(Node(x, y+1, node))
         # Left
-        if x-1 > 0 and self.level_map[y][x-1] is not self.WALL:
+        if x-1 >= 0 and self.level_map[y][x-1] is not self.WALL:
             coords.append(Node(x-1, y, node))
         # Right
         if x+1 < len(self.level_map[y]) and self.level_map[y][x+1] is not self.WALL:
@@ -151,28 +158,56 @@ class AStar:
 
     def get_node_map(self):
         """Returns a 2D list of Nodes representing the map."""
-        node_map = self.level_map[:]
+        node_map = self.gen_empty_map()
+        
         for y, row in enumerate(node_map):
             for x, point in enumerate(row):
-                # If in the open list
-                in_open = None
-                for node in self.open:
-                    if node.pos() == (x, y):
-                        in_open = node
-                if in_open is not None:
-                    node_map[y][x] = ("OPEN", in_open)
+                if self.level_map[y][x] == self.WALL:
+                    node_map[y][x] = (NODE_WALL,)
+                elif self.level_map[y][x] == self.START:
+                    node_map[y][x] = (NODE_START,)
+                elif self.level_map[y][x] == self.END:
+                    node_map[y][x] = (NODE_END,)
+                else:
+                    # If in the open list
+                    for node in self.open:
+                        if node.pos() == (x, y):
+                            node_map[y][x] = (NODE_OPEN, node)
 
-                # If in the closed list
-                in_closed = None
-                for node in self.closed:
-                    if node.pos() == (x, y):
-                        in_closed = node
-                if in_closed is not None:
-                    node_map[y][x] = ("CLOSED", in_closed)
+                    # If in the closed list
+                    for node in self.closed:
+                        if node.pos() == (x, y):
+                            node_map[y][x] = (NODE_CLOSED, node)
+                        
+        return node_map
 
-                # If in neither
-                if not in_open and not in_closed:
-                    node_map[y][x] = None
+    def get_node_map_path(self):
+        """Returns a 2D list of Nodes with the path."""
+        node_map = self.gen_empty_map()
+        path = self.get_final_path()
+
+        for y, row in enumerate(node_map):
+            for x, point in enumerate(row):
+                if self.level_map[y][x] == self.WALL:
+                    node_map[y][x] = (NODE_WALL,)
+                elif self.level_map[y][x] == self.START:
+                    node_map[y][x] = (NODE_START,)
+                elif self.level_map[y][x] == self.END:
+                    node_map[y][x] = (NODE_END,)
+                else:
+                    for node in path:
+                        if node.pos() == (x, y):
+                            node_map[y][x] = (NODE_PATH, node)
+
+        return node_map
+
+    def gen_empty_map(self):
+        node_map = []
+        # Create empty 2D list with the same size as level_map
+        for y, row in enumerate(self.level_map):
+            node_map.append([])
+            for x, point in enumerate(row):
+                node_map[y].append(None)
         return node_map
 
 class Node:
