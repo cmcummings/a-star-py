@@ -11,13 +11,14 @@ class Main(Tk):
         Tk.__init__(self)
         # Initialize master GUI
         self.title("A* Search Algorithm")
+        self.geometry("{}x{}".format(WIDTH, HEIGHT))
         self.resizable(0, 0)
 
         # Initialize A*
         self.astar = AStar(DEFAULT_MAP)
 
         # Initialize canvas
-        self.visualization = Visualization(self, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
+        self.visualization = Visualization(self, self.astar.get_node_map(), width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
 
         # Initialize control panel
         self.control_panel = ControlPanel(self)
@@ -41,8 +42,13 @@ class Main(Tk):
     
     def advance(self):
         """Advances the algorithm and updates the visualization."""
-        self.astar.advance()
-        self.visualization.node_map = self.astar.get_node_map()
+        msg = self.astar.advance()
+        if msg == "NO_PATH":
+            pass
+        elif msg == "SOLVED":
+            self.visualization.node_map = self.astar.get_node_map_path()
+        else:
+            self.visualization.node_map = self.astar.get_node_map()
 
 
 if __name__ == "__main__":
