@@ -210,6 +210,18 @@ class AStar:
                 node_map[y].append(None)
         return node_map
 
+    @staticmethod
+    def load_level_map_from_file(path):
+        level_map = []
+
+        with open(path) as file:
+            for i, line in enumerate(file):
+                level_map.append([])
+                for point in line.split(" "):
+                    level_map[i].append(int(point))
+
+        return level_map
+
 class Node:
     """A node on the map"""
 
