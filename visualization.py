@@ -76,6 +76,6 @@ class Visualization(Canvas):
                 # Draw more info if zoomed enough
                 if self.scale > ZOOM_TEXT_SHOW_MIN:
                     if node is not None and node[0] is not NODE_WALL and node[0] is not NODE_START and node[0] is not NODE_END:
-                        self.create_text(x1+15, y1+10, text="F: " + str(node[1].f))
-                        self.create_text(x2-15, y1+10, text="G: " + str(node[1].g))
-                        self.create_text(x2-15, y2-10, text="H: " + str(node[1].h))
+                        self.create_text(x1+25, y1+20, text="F: " + str(node[1].f))
+                        self.create_text(x2-25, y1+20, text="G: " + str(node[1].g))
+                        self.create_text(x2-25, y2-20, text="H: " + str(node[1].h))
