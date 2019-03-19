@@ -222,6 +222,7 @@ class AStar:
 
         return level_map
 
+
 class Node:
     """A node on the map"""
 
